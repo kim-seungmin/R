@@ -1,0 +1,66 @@
+Sys.getenv("JAVA_HOME")
+
+install.packages("KoNLP")
+install.packages("wordcloud")
+library(KoNLP)
+library(wordcloud)
+useSejongDic()
+
+word<-c("인천광역시","강화군","옹진군")
+frequency<-c(651,85,61)
+wordcloud(word, frequency, random.order=F, random.color=F,colors=rainbow(length(word)))
+display.brewer.all()
+pal2 <- brewer.pal(8,"Dark2")
+wordcloud(word, frequency, colors = pal2)
+
+a<-c("우리나라 이름은 대한민국입니다. 옆에는 일본도 있습니다")
+extractNoun(a)
+
+b<-c("우리나라 이름은 대한민국입니다. 옆에는 일본도 있습니다","옆나라는 일본이며 영어로는 japen입니다")
+c<-sapply(b, extractNoun,USE.NAMES = F)#두문장 이상 명사추출
+c
+
+mergeUserDic(data.frame("대한민국","ncn")) ##사전추가
+mergeUserDic(data.frame("일본","ncn"))
+c<-sapply(b, extractNoun,USE.NAMES = F)
+c
+
+data<-read.csv(file.choose(),header=T)
+head(date)
+
+data2 <- data[data$행정구역.시군구.별 != "전국"]
+data2 <- data[data$행정구역.시군구.별.!="전국"]
+head(data2)
+#############################################
+text <- readLines(file.choose())
+text
+
+noun <- sapply(text, extractNoun, USE.NAMES = F)
+noun
+
+noun2<-unlist(noun)
+noun2
+noun2<-gsub("것","",noun2)
+noun2<-gsub("한","",noun2)
+noun2
+
+word_count<-table(noun2)
+word_count
+head(sort(word_count,decreasing = TRUE),10)
+
+wordcloud(names(word_count),freq=word_count,scale=c(6,0.3),min.freq = 3,random.order = F,rot.per = .1,colors=pal2)
+
+noun2 <- Filter(function(x){nchar(x)>=2},noun2)
+noun2
+word_count<-table(noun2)
+wordcloud(names(word_count),freq=word_count,scale=c(6,0.3),min.freq = 3,random.order = F,rot.per = .1,colors=pal2)
+
+install.packages("plotrix")
+library(plotrix)
+a<-head(sort(word_count, decreasing = T),10)
+pct<-round(a/sum(a)*100,1)
+lab<-paste(names(a),"\n",pct,"%")
+pie(a,main="김대중 대통령 퇴임 감사 서신 분석",cex=0.8,labels=lab)
+pie(a,main="김대중 대통령 퇴임 감사 서신 분석",col=rainbow(10),cex=0.8,labels=lab)
+setwd("/temp")
+savePlot('speechls.png',type='png')
