@@ -1,0 +1,16 @@
+install.packages("rsconnect")
+library(rsconnect)
+rsconnect::setAccountInfo(name='tmdals6265', token='83E60286D878B431F0C950C2AF3764F2', secret='xOU47LYoihKC098ooV2coflmIAJL20acHY29Tp6Q')
+
+library(shiny)
+runExample("01_hello")
+
+ui<-fluidPage(
+  headerPanel("Test"),
+  sidebarPanel(sliderInput(inputId="obs","Number of observations",min=0,max=1000,value=500)),
+  mainPanel(plotOutput(outputId = "distplot"))
+)
+server<-function(input,output){
+  output$distplot<-renderPlot({hisr(rnorm(input$obs))})
+}
+shinyApp(ui=ui,server = server)
